@@ -15,7 +15,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 
 function ProtectedRoute({ component: Component }: { component: any }) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
+
+  console.log('ProtectedRoute state:', { isAuthenticated, isLoading, hasUser: !!user });
 
   // Se ainda está carregando, mostrar loading
   if (isLoading) {

@@ -1,0 +1,45 @@
+Attempting login with: {email: 'victorvnp1@fab.mil.br'}
+useAuth.ts:159 Login API response: {user: {…}, token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiO…Q4M30.We0Ul4mXTT4HYWYVaqjHwJ0QXQVn3lfLVdP7JG400MU', message: 'Login realizado com sucesso'}
+useAuth.ts:164 Token saved: eyJhbGciOiJIUzI1NiIs...
+useAuth.ts:165 User saved: victor
+useAuth.ts:174 Login mutation onSuccess: {user: {…}, token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiO…Q4M30.We0Ul4mXTT4HYWYVaqjHwJ0QXQVn3lfLVdP7JG400MU', message: 'Login realizado com sucesso'}
+useAuth.ts:178 Auth state should be updated now
+login.tsx:34 Login successful, redirecting...
+App.tsx:20 ProtectedRoute state: {isAuthenticated: true, isLoading: false, hasUser: true}
+useAuth.ts:69  GET https://5cad7444-0f4b-4114-a13e-d2aa986f8a06-00-3emuk5a7wt5rw.janeway.replit.dev/api/auth/me 401 (Unauthorized)
+apiRequest @ useAuth.ts:69
+queryFn @ useAuth.ts:101
+fetchFn @ @tanstack_react-query.js?v=fa5aaff3:840
+run @ @tanstack_react-query.js?v=fa5aaff3:494
+start @ @tanstack_react-query.js?v=fa5aaff3:536
+fetch @ @tanstack_react-query.js?v=fa5aaff3:926
+(anonymous) @ @tanstack_react-query.js?v=fa5aaff3:1726
+(anonymous) @ @tanstack_react-query.js?v=fa5aaff3:1725
+batch @ @tanstack_react-query.js?v=fa5aaff3:583
+refetchQueries @ @tanstack_react-query.js?v=fa5aaff3:1724
+(anonymous) @ @tanstack_react-query.js?v=fa5aaff3:1716
+batch @ @tanstack_react-query.js?v=fa5aaff3:583
+invalidateQueries @ @tanstack_react-query.js?v=fa5aaff3:1705
+onSuccess @ useAuth.ts:177
+execute @ @tanstack_react-query.js?v=fa5aaff3:1233
+await in execute
+mutate @ @tanstack_react-query.js?v=fa5aaff3:2630
+onSubmit @ login.tsx:33
+(anonymous) @ chunk-4BFJKWC4.js?v=fa5aaff3:1465
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=fa5aaff3:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=fa5aaff3:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=fa5aaff3:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=fa5aaff3:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=fa5aaff3:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=fa5aaff3:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=fa5aaff3:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=fa5aaff3:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=fa5aaff3:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=fa5aaff3:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=fa5aaff3:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=fa5aaff3:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=fa5aaff3:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=fa5aaff3:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=fa5aaff3:5449Understand this error
+App.tsx:20 ProtectedRoute state: {isAuthenticated: false, isLoading: false, hasUser: false}

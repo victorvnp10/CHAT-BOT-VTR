@@ -10,9 +10,17 @@ import * as path from "path";
 import { fileURLToPath } from "url";
 import bcrypt from "bcrypt";
 import session from "express-session";
+import jwt from "jsonwebtoken";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// JWT functions
+const JWT_SECRET = process.env.JWT_SECRET || process.env.SESSION_SECRET || 'dev-secret-key-change-in-production';
+
+const generateToken = (userId: string) => {
+  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '24h' });
+};
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -57,12 +65,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   }));
 
-  // Authentication middleware
-  const requireAuth = (req: any, res: any, next: any) => {
-    if (req.session?.userId) {
+  // JWT verification function
+  const verifyToken = (token: string) => {
+    try {
+      return jwt.verify(token, JWT_SECRET);
+    } catch (error) {
+      return null;
+    }
+  };
+
+  // JWT Authentication middleware
+  const requireAuth = async (req: any, res: any, next: any) => {
+    try {
+      const authHeader = req.headers.authorization;
+      const token = authHeader && authHeader.split(' ')[1];
+      
+      if (!token) {
+        return res.status(401).json({ error: 'Token de acesso necessário' });
+      }
+      
+      const decoded = verifyToken(token);
+      if (!decoded || !decoded.userId) {
+        return res.status(401).json({ error: 'Token inválido' });
+      }
+      
+      const user = await storage.getUserById(decoded.userId);
+      if (!user) {
+        return res.status(401).json({ error: 'Usuário não encontrado' });
+      }
+      
+      if (!user.isActive) {
+        return res.status(401).json({ error: 'Conta desativada' });
+      }
+      
+      req.user = user;
       next();
-    } else {
-      res.status(401).json({ error: 'Authentication required' });
+    } catch (error) {
+      console.error('Auth middleware error:', error);
+      res.status(401).json({ error: 'Erro de autenticação' });
     }
   };
 
@@ -105,16 +145,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/auth/login", async (req, res) => {
     try {
-      const validatedData = loginSchema.parse(req.body);
+      console.log('=== LOGIN ENDPOINT EXECUTADO ===');
+      console.log('Request body:', req.body);
+      
+      const { email, password } = req.body;
+      
+      // Validação básica
+      if (!email || !password) {
+        return res.status(400).json({ error: "Email e senha são obrigatórios" });
+      }
       
       // Find user
-      const user = await storage.getUserByEmail(validatedData.email);
+      const user = await storage.getUserByEmail(email);
       if (!user) {
         return res.status(401).json({ error: "Email ou senha incorretos" });
       }
       
       // Check password
-      const passwordMatch = await bcrypt.compare(validatedData.password, user.password);
+      const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) {
         return res.status(401).json({ error: "Email ou senha incorretos" });
       }
@@ -124,20 +172,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "Conta desativada" });
       }
       
-      // Set session
-      (req.session as any).userId = user.id;
+      // Generate JWT token
+      const token = generateToken(user.id);
+      console.log('Token gerado com sucesso!');
       
       // Remove password from response
-      const { password, ...userWithoutPassword } = user;
+      const { password: _, ...userWithoutPassword } = user;
       
-      res.json(userWithoutPassword);
-    } catch (error: any) {
-      console.error("Login error:", error);
-      if (error.issues) {
-        res.status(400).json({ error: "Dados inválidos", details: error.issues });
-      } else {
-        res.status(500).json({ error: "Erro interno do servidor" });
-      }
+      const response = {
+        user: userWithoutPassword,
+        token,
+        message: "Login realizado com sucesso"
+      };
+      
+      console.log('=== ENVIANDO RESPOSTA COM TOKEN ===');
+      res.json(response);
+    } catch (error) {
+      console.error('ERRO NO ENDPOINT:', error);
+      res.status(500).json({ error: 'Erro interno do servidor' });
     }
   });
 
@@ -153,16 +205,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/auth/me", requireAuth, async (req, res) => {
     try {
-      const userId = (req.session as any).userId;
-      const user = await storage.getUserById(userId);
-      
-      if (!user) {
-        return res.status(404).json({ error: "Usuário não encontrado" });
-      }
+      console.log('=== /api/auth/me ENDPOINT ===');
+      console.log('User from middleware:', req.user ? req.user.email : 'NO USER');
       
       // Remove password from response
-      const { password, ...userWithoutPassword } = user;
+      const { password, ...userWithoutPassword } = req.user;
       
+      console.log('=== ENVIANDO DADOS DO USUÁRIO ===');
       res.json(userWithoutPassword);
     } catch (error) {
       console.error("Get user error:", error);
