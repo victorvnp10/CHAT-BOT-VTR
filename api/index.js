@@ -201,28 +201,27 @@ const createApp = async () => {
       const token = authHeader && authHeader.split(' ')[1];
       
       if (!token) {
-        return res.status(401).json({ error: 'Token de acesso necessário' });
+        return res.status(401).json({ error: 'Authentication required' });
       }
       
       const decoded = verifyToken(token);
       if (!decoded || !decoded.userId) {
-        return res.status(401).json({ error: 'Token inválido' });
+        return res.status(401).json({ error: 'Invalid token' });
       }
       
       const user = await getUserById(decoded.userId);
       if (!user) {
-        return res.status(401).json({ error: 'Usuário não encontrado' });
+        return res.status(401).json({ error: 'User not found' });
       }
       
       if (!user.isActive) {
-        return res.status(401).json({ error: 'Conta desativada' });
+        return res.status(401).json({ error: 'Account disabled' });
       }
       
       req.user = user;
       next();
     } catch (error) {
-      console.error('Auth middleware error:', error);
-      res.status(401).json({ error: 'Erro de autenticação' });
+      res.status(401).json({ error: 'Authentication required' });
     }
   };
 
@@ -299,29 +298,47 @@ const createApp = async () => {
     }
   });
 
-  // Login - TESTE DIRETO
+  // Login
   app.post("/api/auth/login", async (req, res) => {
-    console.log('=== LOGIN ENDPOINT HIT ===');
-    console.log('Request body:', req.body);
-    
-    // Resposta de teste direto
-    const testToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test.token";
-    const testUser = {
-      id: "test-id",
-      email: "test@test.com", 
-      name: "Test User"
-    };
-    
-    const testResponse = {
-      user: testUser,
-      token: testToken,
-      message: "Login teste realizado com sucesso"
-    };
-    
-    console.log('=== SENDING TEST RESPONSE ===');
-    console.log(JSON.stringify(testResponse, null, 2));
-    
-    res.json(testResponse);
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ error: "Email e senha são obrigatórios" });
+      }
+      
+      // Find user
+      const user = await getUserByEmail(email.toLowerCase().trim());
+      if (!user) {
+        return res.status(401).json({ error: "Email ou senha incorretos" });
+      }
+      
+      // Check password
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (!passwordMatch) {
+        return res.status(401).json({ error: "Email ou senha incorretos" });
+      }
+      
+      // Check if user is active
+      if (!user.isActive) {
+        return res.status(401).json({ error: "Conta desativada" });
+      }
+      
+      // Generate JWT token
+      const token = generateToken(user.id);
+      
+      // Remove password from response
+      const { password: _, ...userWithoutPassword } = user;
+      
+      res.json({
+        user: userWithoutPassword,
+        token,
+        message: "Login realizado com sucesso"
+      });
+    } catch (error) {
+      console.error("Login error:", error);
+      res.status(500).json({ error: 'Erro interno do servidor' });
+    }
   });
 
   // Get current user
