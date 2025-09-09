@@ -3,11 +3,24 @@ import { useLocation } from "wouter";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { LogOut, User } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
 
 export function Header() {
   const [location, navigate] = useLocation();
-  const { user, logout, isLogoutPending } = useAuth();
+  
+  // Mock user data for testing without authentication
+  const user = {
+    id: "mock-user-id",
+    email: "teste@fab.mil.br",
+    name: "Ten Cel Av Alexandre", 
+    rank: "Ten Cel Av",
+    unit: "DPI"
+  };
+  
+  const logout = () => {
+    console.log("Logout clicked - no auth system active");
+  };
+  
+  const isLogoutPending = false;
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">

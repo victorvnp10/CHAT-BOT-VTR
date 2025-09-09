@@ -74,35 +74,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
 
-  // JWT Authentication middleware
+  // NO AUTH - Mock middleware for testing
   const requireAuth = async (req: any, res: any, next: any) => {
-    try {
-      const authHeader = req.headers.authorization;
-      const token = authHeader && authHeader.split(' ')[1];
-      
-      if (!token) {
-        return res.status(401).json({ error: 'Authentication required' });
-      }
-      
-      const decoded = verifyToken(token);
-      if (!decoded || !decoded.userId) {
-        return res.status(401).json({ error: 'Invalid token' });
-      }
-      
-      const user = await storage.getUserById(decoded.userId);
-      if (!user) {
-        return res.status(401).json({ error: 'User not found' });
-      }
-      
-      if (!user.isActive) {
-        return res.status(401).json({ error: 'Account disabled' });
-      }
-      
-      req.user = user;
-      next();
-    } catch (error) {
-      res.status(401).json({ error: 'Authentication required' });
-    }
+    // Mock user for testing without authentication
+    req.user = {
+      id: "mock-user-id",
+      email: "teste@fab.mil.br",
+      name: "Ten Cel Av Alexandre",
+      rank: "Ten Cel Av",
+      unit: "DPI",
+      isActive: true
+    };
+    next();
   };
 
   // Auth routes
