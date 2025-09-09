@@ -301,35 +301,45 @@ const createApp = async () => {
   // Login
   app.post("/api/auth/login", async (req, res) => {
     try {
+      console.log('=== VERCEL LOGIN ENDPOINT ===');
+      console.log('Request body:', req.body);
+      
       const { email, password } = req.body;
       
       if (!email || !password) {
         return res.status(400).json({ error: "Email e senha são obrigatórios" });
       }
       
+      console.log('Searching for user:', email);
       // Find user
       const user = await getUserByEmail(email.toLowerCase().trim());
       if (!user) {
+        console.log('User not found');
         return res.status(401).json({ error: "Email ou senha incorretos" });
       }
       
+      console.log('User found, checking password');
       // Check password
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) {
+        console.log('Password mismatch');
         return res.status(401).json({ error: "Email ou senha incorretos" });
       }
       
       // Check if user is active
       if (!user.isActive) {
+        console.log('User inactive');
         return res.status(401).json({ error: "Conta desativada" });
       }
       
+      console.log('Generating token');
       // Generate JWT token
       const token = generateToken(user.id);
       
       // Remove password from response
       const { password: _, ...userWithoutPassword } = user;
       
+      console.log('Login successful, sending response');
       res.json({
         user: userWithoutPassword,
         token,
@@ -337,7 +347,11 @@ const createApp = async () => {
       });
     } catch (error) {
       console.error("Login error:", error);
-      res.status(500).json({ error: 'Erro interno do servidor' });
+      console.error("Login error stack:", error.stack);
+      res.status(500).json({ 
+        error: 'Erro interno do servidor',
+        details: error.message
+      });
     }
   });
 
@@ -483,16 +497,27 @@ let appInstance;
 // Handler principal para Vercel
 export default async function handler(req, res) {
   try {
+    console.log(`=== VERCEL REQUEST ${req.method} ${req.url} ===`);
+    console.log('Env check:', {
+      DATABASE_URL: process.env.DATABASE_URL ? 'SET' : 'MISSING',
+      JWT_SECRET: process.env.JWT_SECRET ? 'SET' : 'MISSING',
+      SESSION_SECRET: process.env.SESSION_SECRET ? 'SET' : 'MISSING'
+    });
+    
     if (!appInstance) {
+      console.log('Creating new app instance...');
       appInstance = await createApp();
+      console.log('App instance created successfully');
     }
     
     return appInstance(req, res);
   } catch (error) {
     console.error("Handler error:", error);
+    console.error("Error stack:", error.stack);
     res.status(500).json({ 
       error: "Erro interno do servidor", 
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      details: error.message,
+      stack: error.stack,
       timestamp: new Date().toISOString()
     });
   }
