@@ -66,7 +66,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }));
 
   // JWT verification function
-  const verifyToken = (token: string) => {
+  const verifyToken = (token: string): any => {
     try {
       return jwt.verify(token, JWT_SECRET);
     } catch (error) {
@@ -81,28 +81,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const token = authHeader && authHeader.split(' ')[1];
       
       if (!token) {
-        return res.status(401).json({ error: 'Token de acesso necessário' });
+        return res.status(401).json({ error: 'Authentication required' });
       }
       
       const decoded = verifyToken(token);
       if (!decoded || !decoded.userId) {
-        return res.status(401).json({ error: 'Token inválido' });
+        return res.status(401).json({ error: 'Invalid token' });
       }
       
       const user = await storage.getUserById(decoded.userId);
       if (!user) {
-        return res.status(401).json({ error: 'Usuário não encontrado' });
+        return res.status(401).json({ error: 'User not found' });
       }
       
       if (!user.isActive) {
-        return res.status(401).json({ error: 'Conta desativada' });
+        return res.status(401).json({ error: 'Account disabled' });
       }
       
       req.user = user;
       next();
     } catch (error) {
-      console.error('Auth middleware error:', error);
-      res.status(401).json({ error: 'Erro de autenticação' });
+      res.status(401).json({ error: 'Authentication required' });
     }
   };
 
@@ -145,51 +144,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/auth/login", async (req, res) => {
     try {
-      console.log('=== LOGIN ENDPOINT EXECUTADO ===');
-      console.log('Request body:', req.body);
-      
       const { email, password } = req.body;
       
-      // Validação básica
       if (!email || !password) {
-        return res.status(400).json({ error: "Email e senha são obrigatórios" });
+        return res.status(400).json({ error: "Email and password are required" });
       }
       
-      // Find user
       const user = await storage.getUserByEmail(email);
       if (!user) {
-        return res.status(401).json({ error: "Email ou senha incorretos" });
+        return res.status(401).json({ error: "Invalid email or password" });
       }
       
-      // Check password
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) {
-        return res.status(401).json({ error: "Email ou senha incorretos" });
+        return res.status(401).json({ error: "Invalid email or password" });
       }
       
-      // Check if user is active
       if (!user.isActive) {
-        return res.status(401).json({ error: "Conta desativada" });
+        return res.status(401).json({ error: "Account disabled" });
       }
       
-      // Generate JWT token
       const token = generateToken(user.id);
-      console.log('Token gerado com sucesso!');
-      
-      // Remove password from response
       const { password: _, ...userWithoutPassword } = user;
       
-      const response = {
+      res.json({
         user: userWithoutPassword,
         token,
-        message: "Login realizado com sucesso"
-      };
-      
-      console.log('=== ENVIANDO RESPOSTA COM TOKEN ===');
-      res.json(response);
+        message: "Login successful"
+      });
     } catch (error) {
-      console.error('ERRO NO ENDPOINT:', error);
-      res.status(500).json({ error: 'Erro interno do servidor' });
+      res.status(500).json({ error: 'Internal server error' });
     }
   });
 
@@ -205,17 +189,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/auth/me", requireAuth, async (req, res) => {
     try {
-      console.log('=== /api/auth/me ENDPOINT ===');
-      console.log('User from middleware:', req.user ? req.user.email : 'NO USER');
-      
-      // Remove password from response
       const { password, ...userWithoutPassword } = req.user;
-      
-      console.log('=== ENVIANDO DADOS DO USUÁRIO ===');
       res.json(userWithoutPassword);
     } catch (error) {
-      console.error("Get user error:", error);
-      res.status(500).json({ error: "Erro interno do servidor" });
+      res.status(500).json({ error: "Internal server error" });
     }
   });
 

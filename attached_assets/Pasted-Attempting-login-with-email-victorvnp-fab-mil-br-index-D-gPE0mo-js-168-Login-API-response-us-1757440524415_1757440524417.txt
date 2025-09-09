@@ -1,0 +1,84 @@
+Attempting login with: {email: 'victorvnp@fab.mil.br'}
+index-D_gPE0mo.js:168 Login API response: {user: {…}, token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test.token', message: 'Login teste realizado com sucesso'}
+index-D_gPE0mo.js:168 Token saved: eyJhbGciOiJIUzI1NiIs...
+index-D_gPE0mo.js:168 User saved: Test User
+index-D_gPE0mo.js:168 Login mutation onSuccess: {user: {…}, token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test.token', message: 'Login teste realizado com sucesso'}
+index-D_gPE0mo.js:168 Auth state should be updated now
+index-D_gPE0mo.js:168 Login successful, redirecting...
+index-D_gPE0mo.js:168 ProtectedRoute state: {isAuthenticated: true, isLoading: false, hasUser: true}
+index-D_gPE0mo.js:48  GET https://chat-bot-c9izz1p2p-victors-projects-dfd6d507.vercel.app/api/chatbots 500 (Internal Server Error)
+(anonymous) @ index-D_gPE0mo.js:48
+o @ index-D_gPE0mo.js:48
+w @ index-D_gPE0mo.js:48
+start @ index-D_gPE0mo.js:48
+fetch @ index-D_gPE0mo.js:48
+Ri @ index-D_gPE0mo.js:48
+onSubscribe @ index-D_gPE0mo.js:48
+subscribe @ index-D_gPE0mo.js:48
+(anonymous) @ index-D_gPE0mo.js:48
+$b @ index-D_gPE0mo.js:38
+Zu @ index-D_gPE0mo.js:40
+yo @ index-D_gPE0mo.js:40
+HP @ index-D_gPE0mo.js:40
+ds @ index-D_gPE0mo.js:40
+og @ index-D_gPE0mo.js:40
+os @ index-D_gPE0mo.js:38
+(anonymous) @ index-D_gPE0mo.js:40
+setTimeout
+s @ index-D_gPE0mo.js:48
+i @ index-D_gPE0mo.js:48
+batch @ index-D_gPE0mo.js:48
+Jn @ index-D_gPE0mo.js:48
+setData @ index-D_gPE0mo.js:48
+setQueryData @ index-D_gPE0mo.js:48
+onSuccess @ index-D_gPE0mo.js:168
+execute @ index-D_gPE0mo.js:48
+await in execute
+mutate @ index-D_gPE0mo.js:48
+l @ index-D_gPE0mo.js:168
+(anonymous) @ index-D_gPE0mo.js:168
+await in (anonymous)
+dT @ index-D_gPE0mo.js:37
+hT @ index-D_gPE0mo.js:37
+pT @ index-D_gPE0mo.js:37
+Pm @ index-D_gPE0mo.js:37
+Eb @ index-D_gPE0mo.js:37
+(anonymous) @ index-D_gPE0mo.js:37
+zh @ index-D_gPE0mo.js:40
+Z0 @ index-D_gPE0mo.js:37
+Qc @ index-D_gPE0mo.js:37
+hh @ index-D_gPE0mo.js:37
+jT @ index-D_gPE0mo.js:37Understand this error
+index-D_gPE0mo.js:168  GET https://chat-bot-c9izz1p2p-victors-projects-dfd6d507.vercel.app/api/auth/me 401 (Unauthorized)
+_i @ index-D_gPE0mo.js:168
+queryFn @ index-D_gPE0mo.js:168
+o @ index-D_gPE0mo.js:48
+w @ index-D_gPE0mo.js:48
+start @ index-D_gPE0mo.js:48
+fetch @ index-D_gPE0mo.js:48
+(anonymous) @ index-D_gPE0mo.js:48
+(anonymous) @ index-D_gPE0mo.js:48
+batch @ index-D_gPE0mo.js:48
+refetchQueries @ index-D_gPE0mo.js:48
+(anonymous) @ index-D_gPE0mo.js:48
+batch @ index-D_gPE0mo.js:48
+invalidateQueries @ index-D_gPE0mo.js:48
+onSuccess @ index-D_gPE0mo.js:168
+execute @ index-D_gPE0mo.js:48
+await in execute
+mutate @ index-D_gPE0mo.js:48
+l @ index-D_gPE0mo.js:168
+(anonymous) @ index-D_gPE0mo.js:168
+await in (anonymous)
+dT @ index-D_gPE0mo.js:37
+hT @ index-D_gPE0mo.js:37
+pT @ index-D_gPE0mo.js:37
+Pm @ index-D_gPE0mo.js:37
+Eb @ index-D_gPE0mo.js:37
+(anonymous) @ index-D_gPE0mo.js:37
+zh @ index-D_gPE0mo.js:40
+Z0 @ index-D_gPE0mo.js:37
+Qc @ index-D_gPE0mo.js:37
+hh @ index-D_gPE0mo.js:37
+jT @ index-D_gPE0mo.js:37Understand this error
+index-D_gPE0mo.js:168 ProtectedRoute state: {isAuthenticated: false, isLoading: false, hasUser: false}
